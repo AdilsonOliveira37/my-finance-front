@@ -26,15 +26,15 @@ export default function NewTransactionModal() {
     setIsOpen(false);
   }
 
-  useEffect(() => {
-    getCategories()
-      .then((data) => {
-        console.log(data);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  }, []);
+  // useEffect(() => {
+  //   getCategories()
+  //     .then((data) => {
+  //       console.log(data);
+  //     })
+  //     .catch((error) => {
+  //       console.error(error);
+  //     });
+  // }, []);
 
   return (
     <>
@@ -48,7 +48,7 @@ export default function NewTransactionModal() {
       <Transition
         show={isOpen}
         as={Fragment}
-        afterEnter={() => videoRef.current?.play()}
+        
       >
         <Dialog
           open={isOpen}

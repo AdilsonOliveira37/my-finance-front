@@ -1,5 +1,6 @@
 import NewTransactionModal from "@/components/NewTransactionModal";
 import { getTransactions } from "@/services/api";
+import { TransactionTypeEnum } from "@/types/transaction";
 
 export default async function Home() {
   const transactions = await getTransactions()
