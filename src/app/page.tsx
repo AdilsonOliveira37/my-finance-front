@@ -1,38 +1,5 @@
-interface Categories {
-  id: string;
-  description: string;
-  type: TransactionTypeEnum;
-  created_at: string;
-  deleted_at: string | null;
-}
-
-interface Transaction {
-  description: string;
-  value: number;
-  date: string;
-  transactionType: Categories;
-  id: string;
-  createdAt: string;
-  deletedAt: string | null;
-}
-
-enum TransactionTypeEnum {
-  INCOME = "R",
-  EXPENSE = "D",
-}
-
-const getTransactions = async () => {
-  const response = await fetch("http://localhost:3000/transaction");
-
-  if (!response.ok) {
-    console.error(response.statusText);
-    console.error(response.status);
-    throw new Error("Something went wrong");
-  }
-
-  const data: Transaction[] = await response.json();
-  return data;
-};
+import NewTransactionModal from "@/components/NewTransactionModal";
+import { getTransactions } from "@/services/api";
 
 export default async function Home() {
   const transactions = await getTransactions()
@@ -60,13 +27,11 @@ export default async function Home() {
     [TransactionTypeEnum.EXPENSE]: "DESPESA",
   };
   return (
-    <main className="w-full max-w-7xl flex flex-col items-center ">
+    <main className="w-full  mx-auto  max-w-7xl flex flex-col items-center ">
       <header className="w-full flex items-start justify-between my-14 ">
         <h1 className="text-4xl inline">My Finance Web</h1>
 
-        <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-          Nova Transação
-        </button>
+        <NewTransactionModal />
       </header>
 
       <section className="w-full">
