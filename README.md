@@ -23,17 +23,11 @@ $ cd my-finance-web
 ```bash
 $ npm install
 ```
-4. Execute a aplicação back-end em outro terminal
-```bash
-$ cd ../my-finance-web/
-$ npm install
-$ npm run start
-```
-5. Execute a aplicação front-end
+4. Execute a aplicação front-end (Você deve estar rodando a API Backend na porta 3000)
 ```bash
 $ npm run dev
 ```
-6. Conecte-se no link abaixo para ter acesso a interface da aplicação
+5. Conecte-se no link abaixo para ter acesso a interface da aplicação
     http://localhost:3001
 
 
