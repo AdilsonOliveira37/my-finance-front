@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, Fragment, useEffect } from "react";
+import { useState, Fragment, useEffect, useCallback } from "react";
 import {
   Button,
   Description,
@@ -14,9 +14,18 @@ import {
   Select,
   Transition,
 } from "@headlessui/react";
+import { createTransaction, fetchCategories } from "@/services/api";
+import type { Category } from "@/types/transaction";
 
 export default function NewTransactionModal() {
   const [isOpen, setIsOpen] = useState<boolean>(true);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [formData, setFormData] = useState({
+    description: "",
+    value: 0,
+    date: "",
+    category: "",
+  });
 
   function handleOpen() {
     setIsOpen(true);
@@ -26,15 +35,46 @@ export default function NewTransactionModal() {
     setIsOpen(false);
   }
 
-  // useEffect(() => {
-  //   getCategories()
-  //     .then((data) => {
-  //       console.log(data);
-  //     })
-  //     .catch((error) => {
-  //       console.error(error);
-  //     });
-  // }, []);
+  function handleChange(
+    event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) {
+    setFormData({
+      ...formData,
+      [event.target.name]: event.target.value,
+    });
+  }
+  console.log(formData);
+
+  const handleCreateTransaction = useCallback(async () => {
+    const data = {
+      description: formData.description,
+      date: formData.date,
+      transactionTypeId: formData.category,
+      value: Number(formData.value),
+    };
+
+    await createTransaction(data)
+      .then((data) => {
+        alert("Transação criada com sucesso!");
+        handleClose();
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }, [formData]);
+
+  useEffect(() => {
+    async function getCategories() {
+      await fetchCategories()
+        .then((data) => {
+          setCategories(data);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    }
+    getCategories();
+  }, []);
 
   return (
     <>
@@ -45,11 +85,7 @@ export default function NewTransactionModal() {
         Nova Transação
       </Button>
 
-      <Transition
-        show={isOpen}
-        as={Fragment}
-        
-      >
+      <Transition show={isOpen} as={Fragment}>
         <Dialog
           open={isOpen}
           as="div"
@@ -81,6 +117,9 @@ export default function NewTransactionModal() {
                       <Input
                         className="mt-3 block w-full rounded-lg border-none bg-white/5 py-1.5 px-3 text-sm/6 text-white                          focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2 data-[focus]:outline-white/25"
                         type="text"
+                        name="description"
+                        value={formData.description}
+                        onChange={handleChange}
                       />
                     </Field>
                     <Field className="col-span-2">
@@ -90,6 +129,9 @@ export default function NewTransactionModal() {
                       <Input
                         className="mt-3 block w-full rounded-lg border-none bg-white/5 py-1.5 px-3 text-sm/6 text-white                          focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2 data-[focus]:outline-white/25"
                         type="number"
+                        name="value"
+                        value={formData.value}
+                        onChange={handleChange}
                       />
                     </Field>
                     <Field className="col-span-2">
@@ -99,6 +141,9 @@ export default function NewTransactionModal() {
                       <Input
                         className="mt-3 block w-full rounded-lg border-none bg-white/5 py-1.5 px-3 text-sm/6 text-white                          focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2 data-[focus]:outline-white/25"
                         type="date"
+                        name="date"
+                        value={formData.date}
+                        onChange={handleChange}
                       />
                     </Field>
                     <Field className="col-span-4">
@@ -114,19 +159,24 @@ export default function NewTransactionModal() {
                             focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2 data-[focus]:outline-white/25
                             *:text-black
                           "
+                          name="category"
+                          value={formData.category}
+                          onChange={handleChange}
                         >
-                          <option>Moradia</option>
-                          <option>Serviços</option>
-                          <option>Salário</option>
+                          {categories.map((category) => (
+                            <option key={category.id} value={category.id}>
+                              {category.description}
+                            </option>
+                          ))}
                         </Select>
                       </div>
                     </Field>
                   </div>
                 </form>
-                <div className="mt-4">
+                <div className="mt-4 flex justify-end">
                   <Button
-                    className="inline-flex items-center gap-2 rounded-md bg-gray-700 py-1.5 px-3 text-sm/6 font-semibold text-white shadow-inner shadow-white/10 focus:outline-none data-[hover]:bg-gray-600 data-[focus]:outline-1 data-[focus]:outline-white data-[open]:bg-gray-700"
-                    onClick={handleClose}
+                    className="inline-flex items-center gap-2 rounded-md  bg-gray-700 py-1.5 px-3 text-sm/6 font-semibold text-white shadow-inner shadow-white/10 focus:outline-none data-[hover]:bg-gray-600 data-[focus]:outline-1 data-[focus]:outline-white data-[open]:bg-gray-700"
+                    onClick={handleCreateTransaction}
                   >
                     Adicionar
                   </Button>
