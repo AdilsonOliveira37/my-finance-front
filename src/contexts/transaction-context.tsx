@@ -5,16 +5,16 @@ type TransactionContextType = {
   transactions: Transaction[];
   addTransaction: (transaction: Transaction) => void;
   changeTransactions: (transactions: Transaction[]) => void;
-  deleteTransaction: (id: string) => void;
-  updateTransaction: (transaction: Transaction) => void;
+  handleDeleteTransaction: (id: string) => void;
+  handleUpdateTransaction: (transaction: Partial<Transaction>) => void;
 };
 
 export const TransactionContext = createContext<TransactionContextType>({
   transactions: [],
   addTransaction: () => {},
   changeTransactions: () => {},
-  deleteTransaction: () => {},
-  updateTransaction: () => {},
+  handleDeleteTransaction: () => {},
+  handleUpdateTransaction: () => {},
 });
 
 export const TransactionProvider: React.FC<{ children: React.ReactNode }> = ({
@@ -30,18 +30,18 @@ export const TransactionProvider: React.FC<{ children: React.ReactNode }> = ({
     setTransactions([...transactions, transaction]);
   };
 
-  const deleteTransaction = (id: string) => {
+  const handleDeleteTransaction = (id: string) => {
     setTransactions(
       transactions.filter((transaction) => transaction.id !== id)
     );
   };
 
-  const updateTransaction = (newTransaction: Transaction) => {
-    const updatedTransactions = transactions.map((transactionItem) => {
-      if (newTransaction.id === transactionItem.id) {
-        return newTransaction;
+  const handleUpdateTransaction = (newTransaction: Partial<Transaction>) => {
+    const updatedTransactions = transactions.map((transaction) => {
+      if (transaction.id === newTransaction.id) {
+        return { ...transaction, ...newTransaction };
       }
-      return transactionItem;
+      return transaction;
     });
 
     setTransactions(updatedTransactions);
@@ -55,8 +55,8 @@ export const TransactionProvider: React.FC<{ children: React.ReactNode }> = ({
         transactions,
         addTransaction,
         changeTransactions,
-        deleteTransaction,
-        updateTransaction,
+        handleDeleteTransaction,
+        handleUpdateTransaction,
       }}
     >
       {children}

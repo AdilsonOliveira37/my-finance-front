@@ -18,7 +18,7 @@ import { createTransaction, fetchCategories } from "@/services/api";
 import type { Category } from "@/types/transaction";
 
 export default function NewTransactionModal() {
-  const [isOpen, setIsOpen] = useState<boolean>(true);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
   const [categories, setCategories] = useState<Category[]>([]);
   const [formData, setFormData] = useState({
     description: "",
